@@ -1,46 +1,62 @@
-# Getting Started with Create React App
+# My Drive
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## project
 
-## Available Scripts
+- firebase
+- google-drive
 
-In the project directory, you can run:
+## firebase rule
 
-### `npm start`
+- 结构
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```js
+service cloud.firestore {
+  match /databases/{database}/documents { //這裡指的是我們的整個firestore最大的document，我們不需要修改他
+    match /{document=**} {  // 下面是就符合所有的document我們都給他可讀寫
+      allow read, write;
+    }
+  }
+}
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
 
-### `npm test`
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- 修改
+  - read: get/list
+  - write: craete/update/delete
+- 简单验证登录
 
-### `npm run build`
+```js
+allow read,write: if request.auth.uid != null
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- 目标资料验证（内容验证）
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```js
+allow update: if resource.data.content === abc;
+allow delete: if request.auth.uid != null;
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- 接收资料的验证
 
-### `npm run eject`
+```js
+allow create: if request.resource.data.content == 'new content'
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- 自定义条件
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+```js
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+function isAuthWidthData() {
+  return request.auth.uid != null &&
+  get(/databases/${datatabase}/documents/users/${request.auth.uid}).data.uid == request.auth.uid
+}
 
-## Learn More
+match /**/ {
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+  allow delete: if isAuthWithData()
+}
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+
+```

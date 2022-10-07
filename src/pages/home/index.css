@@ -1,0 +1,22 @@
+.c-home{
+  height: 100vh;
+  margin: 0rem;
+  /* background-color: black; */
+}
+
+.page-title{
+  /* color: #fff; */
+  text-align: center;
+  padding: 10px;
+  box-shadow: 1px 1px 2px #ddd;
+}
+
+.file-list {
+  padding: 20px;
+  box-shadow: 1px 1px 2px #ddd;
+}
+.file-item{
+  margin-top: 10px;
+  border: 1px solid #dfdfdf;
+  user-select: none;
+}
